@@ -1,3 +1,4 @@
+// deps:  "https://cdn.jsdelivr.net/npm/phaser-ce@2.9.1/build/phaser.js"
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 

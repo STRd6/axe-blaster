@@ -1,2 +1,5 @@
 # axe-blaster
-Platform game in phaser
+
+Learning Pixi.js
+
+https://github.com/kittykatattack/learningPixi

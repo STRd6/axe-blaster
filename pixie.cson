@@ -3,6 +3,6 @@ version: "0.1.0"
 width: 1280
 height: 720
 remoteDependencies: [
-  "https://cdn.jsdelivr.net/npm/phaser-ce@2.9.1/build/phaser.js"
+  "https://pixijs.download/v4.6.0/pixi.min.js"
 ]
-entryPoint: "test"
+entryPoint: "main"
