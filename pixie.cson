@@ -5,3 +5,4 @@ height: 720
 remoteDependencies: [
   "https://cdn.jsdelivr.net/npm/phaser-ce@2.9.1/build/phaser.js"
 ]
+entryPoint: "test"
