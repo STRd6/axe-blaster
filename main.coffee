@@ -5,6 +5,12 @@ styleNode = document.createElement("style")
 styleNode.innerHTML = require('./style')
 document.head.appendChild(styleNode)
 
+Stats = require "./lib/stats.min"
+stats = new Stats
+document.body.appendChild stats.dom
+
+MapReader = require "./lib/map-reader"
+
 {width, height, name} = require "./pixie"
 
 tau = 2 * Math.PI
@@ -14,6 +20,7 @@ tau = 2 * Math.PI
 loader.add([
   {name: "pika", url: "https://2.pixiecdn.com/sprites/137922/original.png?1"}
   {name: "sheet", url: "https://danielx.whimsy.space/axe-blaster/platformertiles.png"}
+  {name: "map", url: "https://danielx.whimsy.space/axe-blaster/map.png"}
 ]).load ->
   renderer = PIXI.autoDetectRenderer width, height,
     antialias: false
@@ -25,14 +32,20 @@ loader.add([
   # Create a container object called the `stage`
   stage = new Container()
 
-  blocksTextures = [0, 1, 2].map (n) ->
-    t = new Texture(loader.resources["sheet"].texture, new Rectangle(32 * n, 0, 32, 32))
+  blockTexture = new Texture(loader.resources["sheet"].texture, new Rectangle(32, 32, 32, 32))
 
-  blocksTextures.forEach (t, n) ->
-    block = new Sprite(t)
-    stage.addChild(block)
-    block.x = 64 + 32 * n
-    block.y = 64
+  mapData = MapReader(loader.resources.map.texture.baseTexture.source)
+  (({data, width, height}) ->
+    data.forEach (value, i) ->
+      x = i % width
+      y = (i / width)|0
+
+      if value
+        block = new Sprite(blockTexture)
+        block.x = x * 32
+        block.y = y * 32
+        stage.addChild(block)
+  )(mapData)
 
   texture = loader.resources["pika"].texture
   sprite = new Sprite(texture)
@@ -52,9 +65,12 @@ loader.add([
   gameLoop = ->
     requestAnimationFrame gameLoop
 
-    update()
+    stats.begin()
 
+    update()
     # Tell the `renderer` to `render` the `stage`
     renderer.render stage
+
+    stats.end()
 
   gameLoop()
