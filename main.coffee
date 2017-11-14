@@ -12,7 +12,11 @@ MapChunk = require "./models/map-chunk"
 
 tau = 2 * Math.PI
 
-{loader, Container, Point, Rectangle, Sprite, Texture} = PIXI
+{loader, Container, ObservablePoint, Point, Rectangle, Sprite, Text, Texture} = PIXI
+
+# Extend points with a decent default toString
+ObservablePoint::toString = Point::toString = -> 
+  "#{@x}, #{@y}"
 
 loader.add([
   {name: "pika", url: "https://2.pixiecdn.com/sprites/137922/original.png?1"}
@@ -28,14 +32,23 @@ loader.add([
 
   # Create a container object called the `stage`
   stage = new Container()
+  world = new Container()
+  overlay = new Container()
+
+  stage.addChild world
+  stage.addChild overlay
+
+  debugText = new Text "test",
+    fill: 0xFFFFFF
+  overlay.addChild debugText
 
   chunk = MapChunk loader.resources["sheet"].texture, MapReader(loader.resources.map.texture.baseTexture.source)
-  stage.addChild chunk
+  world.addChild chunk
 
   texture = loader.resources["pika"].texture
   sprite = new Sprite(texture)
 
-  stage.addChild(sprite)
+  world.addChild(sprite)
 
   sprite.x = width / 2
   sprite.y = height / 2
@@ -71,33 +84,40 @@ loader.add([
       prev.copy mouse.global
 
       # Do the panning
-      stage.pivot.x -= deltaX / stage.scale.x
-      stage.pivot.y -= deltaY / stage.scale.y
+      world.pivot.x -= deltaX / world.scale.x
+      world.pivot.y -= deltaY / world.scale.y
 
     # Zoom
     document.addEventListener "mousewheel", (e) ->
       e.preventDefault()
 
-      console.log e.deltaY
-      deltaZoom = e.deltaY / 1000
+      deltaZoom = Math.pow 2, (-e.deltaY / Math.abs(e.deltaY))
 
       # Get previous local
-      prevPosition = stage.toLocal(mouse.global)
+      prevPosition = world.toLocal(mouse.global)
 
-      stage.scale.x -= deltaZoom
-      stage.scale.y -= deltaZoom
+      world.scale.x *= deltaZoom
+      world.scale.y *= deltaZoom
 
       # Prevent it from going beyond the zero :P
-      if stage.scale.x <= 0
-        stage.scale.set 0.1
+      if world.scale.x < 0.125
+        world.scale.set 0.125
+
+      if world.scale.x > 8
+        world.scale.set 8
 
       # Zoom in at the mouse position
-      newPosition = stage.toLocal(mouse.global)
-      stage.pivot.x -= newPosition.x - prevPosition.x
-      stage.pivot.y -= newPosition.y - prevPosition.y
+      newPosition = world.toLocal(mouse.global)
+      world.pivot.x -= newPosition.x - prevPosition.x
+      world.pivot.y -= newPosition.y - prevPosition.y
 
   update = ->
     sprite.x += 1
+
+    debugText.text = """
+      pivot: #{world.pivot}
+      scale: #{world.scale}
+    """
 
   gameLoop = ->
     requestAnimationFrame gameLoop
