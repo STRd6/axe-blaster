@@ -13,7 +13,7 @@ module.exports = (source) ->
   imageData = context.getImageData(0, 0, width, height)
 
   extract = (data, n) ->
-    data[n*4 + 3] && 1 # Only Alpha 
+    data[n*4 + 3] && 1 # Only Alpha
 
   data = new Uint8Array(width * height)
 

@@ -29,7 +29,7 @@ function create() {
     map.addTilesetImage('ground_1x1');
     map.addTilesetImage('walls_1x2');
     map.addTilesetImage('tiles2');
-    
+
     layer = map.createLayer('Tile Layer 1');
 
     layer.resizeWorld();
