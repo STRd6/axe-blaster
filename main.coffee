@@ -57,10 +57,12 @@ loader.add([
       prev.copy mouse.global
       console.log "down", mouse.global
 
+    # Attach to document so it doesn't get stuck if the mouse is released outside of the renderer view
     document.addEventListener "mouseup", (e) ->
       active = false
       console.log "up", mouse.global
 
+    # Attach event to document so we can track pans where the cursor is outside of the renderer view
     document.addEventListener "mousemove", (e) ->
       return unless active
 
@@ -72,18 +74,27 @@ loader.add([
       stage.pivot.x -= deltaX / stage.scale.x
       stage.pivot.y -= deltaY / stage.scale.y
 
-      # console.log "move", mouse.global, deltaX, deltaY
-
-    # Zoom test
+    # Zoom
     document.addEventListener "mousewheel", (e) ->
       e.preventDefault()
 
       console.log e.deltaY
       deltaZoom = e.deltaY / 1000
+
+      # Get previous local
+      prevPosition = stage.toLocal(mouse.global)
+
       stage.scale.x -= deltaZoom
       stage.scale.y -= deltaZoom
-      
-      # TODO: Zoom in at the mouse position
+
+      # Prevent it from going beyond the zero :P
+      if stage.scale.x <= 0
+        stage.scale.set 0.1
+
+      # Zoom in at the mouse position
+      newPosition = stage.toLocal(mouse.global)
+      stage.pivot.x -= newPosition.x - prevPosition.x
+      stage.pivot.y -= newPosition.y - prevPosition.y
 
   update = ->
     sprite.x += 1
