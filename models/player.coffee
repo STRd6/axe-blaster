@@ -26,6 +26,17 @@ module.exports = (texture) ->
     dx = velocity.x * dt
     dy = velocity.y * dt
 
+    # This is the 'global' bounds and is affected by the scale and offset of the
+    # parent container, not really what we want
+    # player.getBounds true, bounds
+
+    # This is the bounds 'inside' the sprite and is affected by the scale and anchor
+    # of the player, also not what we want
+    # player.getLocalBounds bounds
+
+    # Therefore we get the bounds ourself, the player's position within the 'world'
+    # without being affected by any pan and zoom the camera has applied
+
     # Update bounds
     bounds.x = player.x - player.width/2
     bounds.y = player.y - player.height/2
