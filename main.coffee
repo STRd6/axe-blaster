@@ -12,11 +12,7 @@ MapChunk = require "./models/map-chunk"
 
 tau = 2 * Math.PI
 
-{loader, Container, ObservablePoint, Point, Rectangle, Sprite, Text, Texture} = PIXI
-
-# Extend points with a decent default toString
-ObservablePoint::toString = Point::toString = -> 
-  "#{@x}, #{@y}"
+{loader, Container, Point, Rectangle, Sprite, Text, Texture} = PIXI
 
 loader.add([
   {name: "pika", url: "https://2.pixiecdn.com/sprites/137922/original.png?1"}
@@ -32,8 +28,8 @@ loader.add([
 
   # Create a container object called the `stage`
   stage = new Container()
-  world = new Container()
-  overlay = new Container()
+  world = new Container() # Panable and zoomable game area
+  overlay = new Container() # UI and fixed position things
 
   stage.addChild world
   stage.addChild overlay
@@ -57,23 +53,23 @@ loader.add([
   sprite.anchor.set(0.5)
   sprite.rotation = 0.5 * tau
 
-  # Pan Tool
+  # Pan with middle click and Zoom with mouse wheel
   do ->
     mouse = renderer.plugins.interaction.mouse
     active = false
-    stage.interactive = true
 
     prev = new Point
 
     renderer.view.addEventListener "mousedown", (e) ->
+      return unless e.button is 1
+
       active = true
       prev.copy mouse.global
-      console.log "down", mouse.global
 
     # Attach to document so it doesn't get stuck if the mouse is released outside of the renderer view
     document.addEventListener "mouseup", (e) ->
+      return unless e.button is 1
       active = false
-      console.log "up", mouse.global
 
     # Attach event to document so we can track pans where the cursor is outside of the renderer view
     document.addEventListener "mousemove", (e) ->
@@ -87,8 +83,7 @@ loader.add([
       world.pivot.x -= deltaX / world.scale.x
       world.pivot.y -= deltaY / world.scale.y
 
-    # Zoom
-    document.addEventListener "mousewheel", (e) ->
+    renderer.view.addEventListener "mousewheel", (e) ->
       e.preventDefault()
 
       deltaZoom = Math.pow 2, (-e.deltaY / Math.abs(e.deltaY))
