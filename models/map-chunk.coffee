@@ -2,7 +2,7 @@
 
 module.exports = (texture, mapData) ->
   blockTexture = new Texture(texture, new Rectangle(32, 32, 32, 32))
-  
+
   container = new Container
 
   (({data, width, height}) ->

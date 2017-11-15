@@ -7,6 +7,7 @@ document.body.appendChild stats.dom
 
 MapReader = require "./lib/map-reader"
 MapChunk = require "./models/map-chunk"
+Player = require "./models/player"
 
 {width, height, name} = require "./pixie"
 
@@ -38,20 +39,12 @@ loader.add([
     fill: 0xFFFFFF
   overlay.addChild debugText
 
-  chunk = MapChunk loader.resources["sheet"].texture, MapReader(loader.resources.map.texture.baseTexture.source)
+  chunk = MapChunk loader.resources.sheet.texture, MapReader(loader.resources.map.texture.baseTexture.source)
   world.addChild chunk
 
-  texture = loader.resources["pika"].texture
-  sprite = new Sprite(texture)
-
-  world.addChild(sprite)
-
-  sprite.x = width / 2
-  sprite.y = height / 2
-
-  sprite.scale.set(2)
-  sprite.anchor.set(0.5)
-  sprite.rotation = 0.5 * tau
+  player = Player(loader.resources.pika.texture)
+  player.velocity.set(100, -1000)
+  world.addChild(player)
 
   # Pan with middle click and Zoom with mouse wheel
   do ->
@@ -106,20 +99,26 @@ loader.add([
       world.pivot.x -= newPosition.x - prevPosition.x
       world.pivot.y -= newPosition.y - prevPosition.y
 
-  update = ->
-    sprite.x += 1
+  update = (dt) ->
+    # Handle player collisions
+
+    # Handle player input
+    player.update(dt)
 
     debugText.text = """
       pivot: #{world.pivot}
       scale: #{world.scale}
+      
+      playerBounds: #{player.bounds}
     """
 
+  dt = 1 / 60
   gameLoop = ->
     requestAnimationFrame gameLoop
 
     stats.begin()
 
-    update()
+    update(dt)
 
     # Tell the `renderer` to `render` the `stage`
     renderer.render stage
