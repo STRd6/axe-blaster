@@ -77,13 +77,22 @@ module.exports = (texture) ->
 
   return player
 
-collides = (bounds, objects) ->
+getTileBounds = (tile, rect) ->
+  rect.x = tile.x
+  rect.y = tile.y
+  rect.width = tile.width
+  rect.height = tile.height
 
+  return rect
+
+testRect = new Rectangle
+
+collides = (bounds, objects) ->
   i = 0
   length = objects.length
 
   while i < length
-    result = hitTestRectangle(bounds, objects[i].getBounds())
+    result = hitTestRectangle(bounds, getTileBounds(objects[i], testRect))
     if result
       return result
     i += 1

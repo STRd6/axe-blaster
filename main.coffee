@@ -103,7 +103,7 @@ loader.add([
     # Handle player collisions
 
     # Handle player input
-    player.update(dt)
+    player.update(dt, chunk.children)
 
     debugText.text = """
       pivot: #{world.pivot}
