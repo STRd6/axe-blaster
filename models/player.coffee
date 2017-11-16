@@ -2,6 +2,8 @@
 
 {abs, sign} = Math
 
+{hitTestRectangle} = require "../lib/util"
+
 module.exports = (texture) ->
   player = new Sprite(texture)
 
@@ -75,16 +77,13 @@ module.exports = (texture) ->
 
   return player
 
-collide = ->
-
 collides = (bounds, objects) ->
-  return false
-  # TODO: actual collisions
 
   i = 0
   length = objects.length
 
   while i < length
-    result = collide(bounds, objects[i].getBounds())
+    result = hitTestRectangle(bounds, objects[i].getBounds())
     if result
       return result
+    i += 1

@@ -108,7 +108,7 @@ loader.add([
     debugText.text = """
       pivot: #{world.pivot}
       scale: #{world.scale}
-      
+
       playerBounds: #{player.bounds}
     """
 
