@@ -109,7 +109,8 @@ loader.add([
       pivot: #{world.pivot}
       scale: #{world.scale}
 
-      playerBounds: #{player.bounds}
+      player.bounds: #{player.bounds}
+      player.velocity: #{player.velocity}
     """
 
   dt = 1 / 60

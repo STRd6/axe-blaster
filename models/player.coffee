@@ -1,8 +1,10 @@
 {Point, Rectangle, Sprite} = PIXI
 
-{abs, sign} = Math
+{abs, clamp, sign} = Math
 
 {hitTestRectangle2} = require "../lib/util"
+
+{keydown} = require("../lib/keyboard")
 
 module.exports = (texture) ->
   player = new Sprite(texture)
@@ -13,7 +15,14 @@ module.exports = (texture) ->
   residual = new Point
   velocity = new Point
 
-  gravity = 3600
+  gravity = 3600 # pixels / s^2
+  jumpImpulse = -1000
+  movementAcceleration = 900
+  airAcceleration = 300
+
+  # Rate at which x velocity slows when on the ground
+  groundFriction = 240
+  airFriction = 120
 
   player.x = 256
   player.y = 256
@@ -21,12 +30,45 @@ module.exports = (texture) ->
   player.scale.set(0.5)
   player.anchor.set(0.5)
 
+  standing = false
+
+  updateInput = (dt) ->
+    movementX = 0
+
+    if keydown("ArrowLeft")
+      movementX = -1
+
+    if keydown("ArrowRight")
+      movementX = +1
+
+    if keydown("ArrowUp") and standing
+      velocity.y = jumpImpulse
+
+    if standing
+      acc = movementAcceleration
+    else
+      acc = airAcceleration
+
+    if movementX is -sign(velocity.x)
+      velocity.x += 2 * movementX * acc * dt
+    else
+      velocity.x += movementX * acc * dt
+
   player.update = (dt, collisionGeometry) ->
+    updateInput(dt)
+
+    if standing
+      friction = groundFriction
+    else
+      friction = airFriction
+
+    velocity.x = approach velocity.x, 0, friction * dt
+
     # gravity
     velocity.y += gravity * dt
 
-    dx = velocity.x * dt
-    dy = velocity.y * dt
+    dx = velocity.x * dt + residual.x
+    dy = velocity.y * dt + residual.y
 
     # This is the 'global' bounds and is affected by the scale and offset of the
     # parent container, not really what we want
@@ -46,8 +88,9 @@ module.exports = (texture) ->
     bounds.height = player.height
 
     # Check Collisions one pixel at a time
-    #TODO Reduce the # of calls to collides
+    # Carry residual over into next frame
     signX = sign(dx)
+    residual.x = dx - (dx|0)
     n = abs(dx|0)
     while n > 0
       n--
@@ -57,9 +100,13 @@ module.exports = (texture) ->
         player.x += signX
       else
         velocity.x = 0
+        residual.x = 0
 
-    #TODO Reduce the # of calls to collides
+    # Reset to existing bounds
+    bounds.x = player.x
+
     signY = sign(dy)
+    residual.y = dy - (dy|0)
     n = abs(dy|0)
     while n > 0
       n--
@@ -69,6 +116,11 @@ module.exports = (texture) ->
         player.y += signY
       else
         velocity.y = 0
+        residual.y = 0
+
+    # Check for floor beneath
+    bounds.y = player.y + 1
+    standing = collides(bounds, collisionGeometry)
 
   Object.assign player, {
     bounds
@@ -96,3 +148,6 @@ collides = (bounds, objects) ->
     if result
       return result
     i += 1
+
+approach = (value, target, maxDelta) ->
+  value + clamp(target - value, -maxDelta, maxDelta)
