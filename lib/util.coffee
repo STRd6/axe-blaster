@@ -1,3 +1,5 @@
+{abs} = Math
+
 module.exports =
   hitTestRectangle: (r1, r2) ->
     # Find the center points of each sprite
@@ -21,4 +23,9 @@ module.exports =
     combinedHalfHeights = r1.halfHeight + r2.halfHeight;
   
     # Check for a collision on the x axis
-    return Math.abs(vx) < combinedHalfWidths and Math.abs(vy) < combinedHalfHeights
+    return abs(vx) < combinedHalfWidths and abs(vy) < combinedHalfHeights
+
+  # NOTE: x, y values are center of rects
+  hitTestRectangle2: (a, b) ->
+    return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+           (abs(a.y - b.y) * 2 < (a.height + b.height))

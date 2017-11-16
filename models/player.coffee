@@ -2,7 +2,7 @@
 
 {abs, sign} = Math
 
-{hitTestRectangle} = require "../lib/util"
+{hitTestRectangle2} = require "../lib/util"
 
 module.exports = (texture) ->
   player = new Sprite(texture)
@@ -40,8 +40,8 @@ module.exports = (texture) ->
     # without being affected by any pan and zoom the camera has applied
 
     # Update bounds
-    bounds.x = player.x - player.width/2
-    bounds.y = player.y - player.height/2
+    bounds.x = player.x
+    bounds.y = player.y
     bounds.width = player.width
     bounds.height = player.height
 
@@ -78,8 +78,8 @@ module.exports = (texture) ->
   return player
 
 getTileBounds = (tile, rect) ->
-  rect.x = tile.x
-  rect.y = tile.y
+  rect.x = tile.x + tile.width/2
+  rect.y = tile.y + tile.height/2
   rect.width = tile.width
   rect.height = tile.height
 
@@ -92,7 +92,7 @@ collides = (bounds, objects) ->
   length = objects.length
 
   while i < length
-    result = hitTestRectangle(bounds, getTileBounds(objects[i], testRect))
+    result = hitTestRectangle2(bounds, getTileBounds(objects[i], testRect))
     if result
       return result
     i += 1
