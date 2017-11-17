@@ -24,7 +24,7 @@ module.exports = (texture) ->
   maxVelocityY = 1800
 
   # Rate at which x velocity slows when on the ground
-  groundFriction = 1200
+  groundFriction = 3600
   airFriction = 120
 
   movementX = 0
@@ -40,6 +40,7 @@ module.exports = (texture) ->
   lastStanding = 0 # seconds since player was last standing on the ground
   lastJumping = 100 # seconds since player last jumped
   jumpReleased = true # if the player has released the jump button since pressing it
+  fastFall = false # when holding down fall faster
 
   updateInput = (dt) ->
     movementX = 0
@@ -55,6 +56,8 @@ module.exports = (texture) ->
 
     if keydown("ArrowRight")
       movementX = +1
+
+    fastFall = keydown("ArrowDown") or 0
 
     if keydown("ArrowUp") and lastJumping >= 0.25 and jumpReleased
       jumpReleased = false
@@ -93,8 +96,8 @@ module.exports = (texture) ->
 
     velocity.x = approach velocity.x, 0, friction * dt
 
-    # gravity
-    velocity.y += gravity * dt
+    # gravity is doubled when fastFalling
+    velocity.y += gravity * (fastFall + 1) * dt
 
     # Clamp velocity to max
     if velocity.x > maxVelocityX
