@@ -17,6 +17,7 @@ module.exports = (texture) ->
 
   gravity = 3600 # pixels / s^2
   jumpImpulse = -1350
+  jumpDirectionalImpulse = 120
   movementAcceleration = 900
 
   maxVelocityX = 600
@@ -58,6 +59,7 @@ module.exports = (texture) ->
     if keydown("ArrowUp") and lastJumping >= 0.25 and jumpReleased
       jumpReleased = false
       lastJumping = 0
+      velocity.x += movementX * jumpDirectionalImpulse
 
       if lastStanding <= 0.1 # Jump
         jumpCount = 1
