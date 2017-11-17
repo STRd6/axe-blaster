@@ -3,6 +3,10 @@ require "./setup"
 # FPS Display
 Stats = require "./lib/stats.min"
 stats = new Stats
+
+vxPanel = stats.addPanel new Stats.Panel( 'vx', '#ff8', '#221' )
+vyPanel = stats.addPanel new Stats.Panel( 'vy', '#ff8', '#221' )
+
 document.body.appendChild stats.dom
 
 MapReader = require "./lib/map-reader"
@@ -128,6 +132,8 @@ loader.add([
     # Tell the `renderer` to `render` the `stage`
     renderer.render stage
 
+    vxPanel.update(900 + player.velocity.x, 1800)
+    vyPanel.update(1800 + player.velocity.y, 3600)
     stats.end()
 
   gameLoop()

@@ -19,7 +19,8 @@ module.exports = (texture) ->
   jumpImpulse = -1350
   movementAcceleration = 900
 
-  maxVelocity = 600
+  maxVelocityX = 600
+  maxVelocityY = 1800
 
   # Rate at which x velocity slows when on the ground
   groundFriction = 1200
@@ -90,13 +91,19 @@ module.exports = (texture) ->
 
     velocity.x = approach velocity.x, 0, friction * dt
 
-    if velocity.x > maxVelocity
-      velocity.x = maxVelocity
-    if velocity.x < -maxVelocity
-      velocity.x = -maxVelocity
-
     # gravity
     velocity.y += gravity * dt
+
+    # Clamp velocity to max
+    if velocity.x > maxVelocityX
+      velocity.x = maxVelocityX
+    if velocity.x < -maxVelocityX
+      velocity.x = -maxVelocityX
+
+    if velocity.y > maxVelocityY
+      velocity.y = maxVelocityY
+    if velocity.y < -maxVelocityY
+      velocity.y = -maxVelocityY
 
     dx = velocity.x * dt + residual.x
     dy = velocity.y * dt + residual.y
