@@ -16,13 +16,16 @@ module.exports = (texture) ->
   velocity = new Point
 
   gravity = 3600 # pixels / s^2
-  jumpImpulse = -1000
+  jumpImpulse = -1350
   movementAcceleration = 900
-  airAcceleration = 300
+
+  maxVelocity = 600
 
   # Rate at which x velocity slows when on the ground
-  groundFriction = 240
+  groundFriction = 1200
   airFriction = 120
+
+  movementX = 0
 
   player.x = 256
   player.y = 256
@@ -31,9 +34,19 @@ module.exports = (texture) ->
   player.anchor.set(0.5)
 
   standing = false
+  jumpCount = 0 # Track double jumps, etc
+  lastStanding = 0 # seconds since player was last standing on the ground
+  lastJumping = 100 # seconds since player last jumped
+  jumpReleased = true # if the player has released the jump button since pressing it
 
   updateInput = (dt) ->
     movementX = 0
+
+    unless keydown("ArrowUp")
+      unless jumpReleased # short jump
+        if velocity.y <= -900
+          velocity.y += 750
+      jumpReleased = true
 
     if keydown("ArrowLeft")
       movementX = -1
@@ -41,13 +54,23 @@ module.exports = (texture) ->
     if keydown("ArrowRight")
       movementX = +1
 
-    if keydown("ArrowUp") and standing
-      velocity.y = jumpImpulse
+    if keydown("ArrowUp") and lastJumping >= 0.25 and jumpReleased
+      jumpReleased = false
+      lastJumping = 0
 
-    if standing
-      acc = movementAcceleration
+      if lastStanding <= 0.1 # Jump
+        jumpCount = 1
+        velocity.y = jumpImpulse
+      else if jumpCount < 2 # Double Jump / Air Jump
+        # The player can get two jumps of this style by walking off a ledge then
+        # doing their first jump
+        ratio = (5 - jumpCount) / 6
+        velocity.y = ratio * jumpImpulse
+        jumpCount += 1
     else
-      acc = airAcceleration
+      lastJumping += dt
+
+    acc = movementAcceleration
 
     if movementX is -sign(velocity.x)
       velocity.x += 2 * movementX * acc * dt
@@ -57,12 +80,20 @@ module.exports = (texture) ->
   player.update = (dt, collisionGeometry) ->
     updateInput(dt)
 
-    if standing
-      friction = groundFriction
+    if !movementX
+      if standing
+        friction = groundFriction
+      else
+        friction = airFriction
     else
-      friction = airFriction
+      friction = 0
 
     velocity.x = approach velocity.x, 0, friction * dt
+
+    if velocity.x > maxVelocity
+      velocity.x = maxVelocity
+    if velocity.x < -maxVelocity
+      velocity.x = -maxVelocity
 
     # gravity
     velocity.y += gravity * dt
@@ -121,6 +152,12 @@ module.exports = (texture) ->
     # Check for floor beneath
     bounds.y = player.y + 1
     standing = collides(bounds, collisionGeometry)
+
+    if standing
+      lastStanding = 0
+      jumpCount = 0
+    else
+      lastStanding += dt
 
   Object.assign player, {
     bounds

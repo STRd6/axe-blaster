@@ -105,6 +105,10 @@ loader.add([
     # Handle player input
     player.update(dt, chunk.children)
 
+    # Update camera
+    world.pivot.x = player.x - (width / world.scale.x) / 2
+    world.pivot.y = player.y - (height / world.scale.y) / 2
+
     debugText.text = """
       pivot: #{world.pivot}
       scale: #{world.scale}
