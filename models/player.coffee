@@ -29,18 +29,18 @@ module.exports = (texture) ->
 
   movementX = 0
 
-  player.x = 256
-  player.y = 256
-
-  player.scale.set(0.5)
-  player.anchor.set(0.5)
-
   standing = false
   jumpCount = 0 # Track double jumps, etc
   lastStanding = 0 # seconds since player was last standing on the ground
   lastJumping = 100 # seconds since player last jumped
   jumpReleased = true # if the player has released the jump button since pressing it
   fastFall = false # when holding down fall faster
+
+  player.x = 256
+  player.y = 256
+
+  player.scale.set(0.5)
+  player.anchor.set(0.5)
 
   updateInput = (dt) ->
     movementX = 0
