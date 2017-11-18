@@ -3,6 +3,6 @@ version: "0.1.0"
 width: 1280
 height: 720
 remoteDependencies: [
-  "https://pixijs.download/v4.6.0/pixi.min.js"
+  "https://pixijs.download/v4.6.0/pixi.js"
 ]
 entryPoint: "main"

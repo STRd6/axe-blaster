@@ -9,6 +9,13 @@ vyPanel = stats.addPanel new Stats.Panel( 'vy', '#ff8', '#221' )
 
 document.body.appendChild stats.dom
 
+contentElement = document.createElement "content"
+document.body.appendChild contentElement
+
+debugText = document.createElement "pre"
+debugText.classList.add "debug"
+contentElement.appendChild debugText
+
 MapReader = require "./lib/map-reader"
 MapChunk = require "./models/map-chunk"
 Player = require "./models/player"
@@ -19,17 +26,25 @@ tau = 2 * Math.PI
 
 {loader, Container, Point, Rectangle, Sprite, Text, Texture} = PIXI
 
+playTheme = (audio) ->
+  audio.setAttribute("loop", true)
+  audio.volume = 0.5
+  audio.play()
+
 loader.add([
   {name: "pika", url: "https://2.pixiecdn.com/sprites/137922/original.png?1"}
   {name: "sheet", url: "https://danielx.whimsy.space/axe-blaster/platformertiles.png"}
   {name: "map", url: "https://danielx.whimsy.space/axe-blaster/map.png"}
+  {name: "theme", url: "https://danielx.whimsy.space/axe-blaster/Theme to Red Ice.ogg"}
 ]).load ->
   renderer = PIXI.autoDetectRenderer width, height,
     antialias: false
     transparent: false
     resolution: 1
 
-  document.body.appendChild(renderer.view)
+  contentElement.appendChild(renderer.view)
+
+  # playTheme loader.resources.theme.data
 
   # Create a container object called the `stage`
   stage = new Container()
@@ -38,10 +53,6 @@ loader.add([
 
   stage.addChild world
   stage.addChild overlay
-
-  debugText = new Text "test",
-    fill: 0xFFFFFF
-  overlay.addChild debugText
 
   chunk = MapChunk loader.resources.sheet.texture, MapReader(loader.resources.map.texture.baseTexture.source)
   world.addChild chunk
@@ -113,7 +124,7 @@ loader.add([
     world.pivot.x = player.x - (width / world.scale.x) / 2
     world.pivot.y = player.y - (height / world.scale.y) / 2
 
-    debugText.text = """
+    debugText.textContent = """
       pivot: #{world.pivot}
       scale: #{world.scale}
 
