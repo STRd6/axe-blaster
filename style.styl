@@ -7,6 +7,11 @@ body
   flex: 1
   margin: 0
 
+body > canvas
+  display: block
+  margin: auto
+  position: relative
+
 body > content
   display: block
   margin: auto
@@ -17,3 +22,14 @@ body > content
     margin: 1em
     pointer-events: none
     position: absolute
+
+  > progress
+    bottom: 0
+    left: 0
+    margin: auto
+    position: absolute
+    right: 0
+    top: 0
+
+    &[value="100"]
+      display: none

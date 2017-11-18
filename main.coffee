@@ -1,5 +1,13 @@
 require "./setup"
 
+MapReader = require "./lib/map-reader"
+MapChunk = require "./models/map-chunk"
+Player = require "./models/player"
+
+{width, height, name} = require "./pixie"
+
+{loader, Container, Point, Rectangle, Sprite, Text, Texture} = PIXI
+
 # FPS Display
 Stats = require "./lib/stats.min"
 stats = new Stats
@@ -12,19 +20,21 @@ document.body.appendChild stats.dom
 contentElement = document.createElement "content"
 document.body.appendChild contentElement
 
+progressElement = document.createElement "progress"
+progressElement.max = 100
+progressElement.value = 0
+contentElement.appendChild progressElement
+
 debugText = document.createElement "pre"
 debugText.classList.add "debug"
 contentElement.appendChild debugText
 
-MapReader = require "./lib/map-reader"
-MapChunk = require "./models/map-chunk"
-Player = require "./models/player"
+renderer = PIXI.autoDetectRenderer width, height,
+  antialias: false
+  transparent: false
+  resolution: 1
 
-{width, height, name} = require "./pixie"
-
-tau = 2 * Math.PI
-
-{loader, Container, Point, Rectangle, Sprite, Text, Texture} = PIXI
+contentElement.appendChild(renderer.view)
 
 playTheme = (audio) ->
   audio.setAttribute("loop", true)
@@ -36,14 +46,10 @@ loader.add([
   {name: "sheet", url: "https://danielx.whimsy.space/axe-blaster/platformertiles.png"}
   {name: "map", url: "https://danielx.whimsy.space/axe-blaster/map.png"}
   {name: "theme", url: "https://danielx.whimsy.space/axe-blaster/Theme to Red Ice.ogg"}
-]).load ->
-  renderer = PIXI.autoDetectRenderer width, height,
-    antialias: false
-    transparent: false
-    resolution: 1
-
-  contentElement.appendChild(renderer.view)
-
+])
+.on "progress", ({progress}) ->
+  progressElement.value = progress
+.load ->
   # playTheme loader.resources.theme.data
 
   # Create a container object called the `stage`
