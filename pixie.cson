@@ -5,4 +5,4 @@ height: 720
 remoteDependencies: [
   "https://pixijs.download/v4.6.0/pixi.js"
 ]
-entryPoint: "main"#"experiments/intro"
+entryPoint: "main" # "experiments/intro"
