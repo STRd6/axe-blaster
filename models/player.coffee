@@ -35,6 +35,7 @@ module.exports = (texture) ->
   lastJumping = 100 # seconds since player last jumped
   jumpReleased = true # if the player has released the jump button since pressing it
   fastFall = false # when holding down fall faster
+  lastDirection = 1
 
   player.x = 256
   player.y = 256
@@ -52,10 +53,10 @@ module.exports = (texture) ->
       jumpReleased = true
 
     if keydown("ArrowLeft")
-      movementX = -1
+      lastDirection = movementX = -1
 
     if keydown("ArrowRight")
-      movementX = +1
+      lastDirection = movementX = +1
 
     fastFall = keydown("ArrowDown") or 0
 
@@ -170,6 +171,9 @@ module.exports = (texture) ->
       jumpCount = 0
     else
       lastStanding += dt
+
+    # Should just be lastDirection but the placeholder sprite is facing left and larger
+    player.scale.x = -1/2 * lastDirection
 
   Object.assign player, {
     bounds

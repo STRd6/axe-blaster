@@ -29,7 +29,7 @@ neighbors = [
 getAutoTileIndex = (index, {width, height, data}) ->
   x = index % width
   y = (index / width)|0
-  
+
   neighbors.reduce (acc, [dx, dy], n) ->
     m = Math.pow(2, n)
 
