@@ -8,9 +8,7 @@ An intro that presents the following title cards:
 
 ###
 
-require "../setup"
-
-{width, height, name} = require "../pixie"
+{width, height} = require "../pixie"
 
 {Container, Graphics, Point, Rectangle, Sprite, Text, Texture} = PIXI
 
@@ -18,21 +16,18 @@ loader = new PIXI.loaders.Loader
 
 {min, max} = Math
 
-renderer = PIXI.autoDetectRenderer width, height,
-  antialias: false
-  transparent: false
-  resolution: 1
-
-renderer.backgroundColor = 0xFFFFFF
-
-document.body.appendChild renderer.view
-
 stage = new Container()
+
+whiteBg = new Graphics()
+whiteBg.beginFill 0xFFFFFF
+whiteBg.drawRect 100, 100, width, height
+stage.addChild whiteBg
+
+# Fade to black bg
 bg = new Graphics()
-bg.beginFill = 0x000000
+bg.beginFill 0x000000
 bg.drawRect 0, 0, width, height
 bg.alpha = 0
-
 stage.addChild bg
 
 toLetters = (letters) ->
@@ -100,40 +95,32 @@ timings = [
   4.728
 ]
 
-dt = 1 / 60
-t = 0
-loaded = false
-gameLoop = ->
-  if t < 10
-    requestAnimationFrame gameLoop
-  else
-    renderer.view.remove()
-    resolve()
+module.exports = ->
+  stage.update = (dt) ->
+    if t >= 10
+      stage.emit('complete')
 
-  letterSprites.forEach (letter, i) ->
-    letter.visible = t > timings[i]
+    letterSprites.forEach (letter, i) ->
+      letter.visible = t > timings[i]
 
-  bg.alpha = max((t - 5.25)/0.875, 0)
-  assocText.alpha = max((t - 6.5)/0.875, 0)
+    bg.alpha = max((t - 5.25)/0.875, 0)
+    assocText.alpha = max((t - 6.5)/0.875, 0)
 
-  if t > 8.375
-    assocText.alpha = 1 - max((t - 8.375)/0.875, 0)
+    if t > 8.375
+      assocText.alpha = 1 - max((t - 8.375)/0.875, 0)
 
-  # Tell the `renderer` to `render` the `stage`
-  renderer.render stage
+    if loaded
+      t += dt
 
-  if loaded
-    t += dt
+  dt = 1 / 60
+  t = 0
+  loaded = false
 
-gameLoop()
+  loader.add([
+    {name: "typing", url: "https://danielx.whimsy.space/axe-blaster/type.ogg"}
+  ])
+  .load ->
+    loaded = true
+    loader.resources.typing.data.play()
 
-loader.add([
-  {name: "typing", url: "https://danielx.whimsy.space/axe-blaster/type.ogg"}
-])
-.load ->
-  loaded = true
-  loader.resources.typing.data.play()
-
-resolve = null
-module.exports = new Promise (res) ->
-  resolve = res
+  return stage

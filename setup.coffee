@@ -2,6 +2,11 @@ styleNode = document.createElement("style")
 styleNode.innerHTML = require('./style')
 document.head.appendChild(styleNode)
 
+# FPS Display
+Stats = require "./lib/stats.min"
+global.stats = new Stats
+document.body.appendChild stats.dom
+
 # Extend PIXI points with a decent default toString
 {ObservablePoint, Point, Rectangle} = PIXI
 pointToString = ->
