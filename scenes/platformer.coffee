@@ -32,6 +32,7 @@ module.exports = (renderer) ->
     {name: "sheet", url: "https://danielx.whimsy.space/axe-blaster/platformertiles.png"}
     {name: "map", url: "https://danielx.whimsy.space/axe-blaster/map.png"}
     {name: "theme", url: "https://danielx.whimsy.space/axe-blaster/Theme to Red Ice.ogg"}
+    {name: "jump", url: "https://danielx.whimsy.space/axe-blaster/jump.wav"}
   ])
   .on "progress", ({progress}) ->
     ;# progressElement.value = progress
@@ -39,7 +40,7 @@ module.exports = (renderer) ->
     chunk = MapChunk loader.resources.sheet.texture, MapReader(loader.resources.map.texture.baseTexture.source)
     world.addChild chunk
 
-    player = Player(loader.resources.pika.texture)
+    player = Player(loader.resources.pika.texture, loader.resources.jump.data)
     player.velocity.set(100, -1000)
     world.addChild(player)
 

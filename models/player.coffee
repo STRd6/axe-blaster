@@ -6,7 +6,7 @@
 
 {keydown} = require("../lib/keyboard")
 
-module.exports = (texture) ->
+module.exports = (texture, jumpSound) ->
   player = new Sprite(texture)
 
   {position} = player
@@ -64,6 +64,9 @@ module.exports = (texture) ->
       jumpReleased = false
       lastJumping = 0
       velocity.x += movementX * jumpDirectionalImpulse
+      if jumpSound.playing
+        jumpSound.stop()
+      jumpSound.play()
 
       if lastStanding <= 0.1 # Jump
         jumpCount = 1
