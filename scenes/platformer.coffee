@@ -2,20 +2,12 @@
 
 {Container} = PIXI
 
-audioContext = new AudioContext
-
 MapReader = require "../lib/map-reader"
 MapChunk = require "../models/map-chunk"
 Player = require "../models/player"
 Panzoom = require "../lib/panzoom"
 
-FXXPlayer = require "../lib/fxx-player"
-
 loader = new PIXI.loaders.Loader
-
-playAudio = (audio, volume=1, repeat) ->
-  audio.volume = volume
-  audio.play()
 
 module.exports = (renderer) ->
   # Create a container object called the `stage`
@@ -47,15 +39,14 @@ module.exports = (renderer) ->
     player = Player(loader.resources.pika.texture)
     player.velocity.set(100, -1000)
 
-    console.log loader.resources.fxx.data
-
-    fxxPlayer = FXXPlayer(loader.resources.fxx.data, audioContext)
+    # Load FXX Data into global audio player
+    audio.loadData loader.resources.fxx.data
 
     player.on "jump", ->
-      fxxPlayer.play("jump")
+      audio.play("jump")
 
     player.on "land", ->
-      fxxPlayer.play("land")
+      audio.play("land")
 
     world.addChild(player)
 

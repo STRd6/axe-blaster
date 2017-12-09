@@ -25,3 +25,6 @@ Resource._xhrTypeMap['fxx'] = Resource.XHR_RESPONSE_TYPE.BUFFER
 {min, max} = Math
 Math.clamp = (number, lower, upper) ->
   max(min(number, upper), lower)
+
+# Global audio player
+global.audio = require "./lib/audio-player"
