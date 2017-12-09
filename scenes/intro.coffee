@@ -72,7 +72,7 @@ assocText = do ->
   text.y = height / 2
 
   stage.addChild text
-  
+
   return text
 
 timings = [
@@ -97,6 +97,9 @@ timings = [
 
 module.exports = ->
   stage.update = (dt) ->
+    if loaded and t is 0 # First update after loading
+      loader.resources.typing.data.play()
+
     if t >= 10
       stage.emit('complete')
 
@@ -121,6 +124,5 @@ module.exports = ->
   ])
   .load ->
     loaded = true
-    loader.resources.typing.data.play()
 
   return stage

@@ -6,7 +6,7 @@
 
 {keydown} = require("../lib/keyboard")
 
-module.exports = (texture, jumpSound) ->
+module.exports = (texture) ->
   player = new Sprite(texture)
 
   {position} = player
@@ -64,19 +64,18 @@ module.exports = (texture, jumpSound) ->
       jumpReleased = false
       lastJumping = 0
       velocity.x += movementX * jumpDirectionalImpulse
-      if jumpSound.playing
-        jumpSound.stop()
-      jumpSound.play()
 
       if lastStanding <= 0.1 # Jump
         jumpCount = 1
         velocity.y = jumpImpulse
+        player.emit("jump")
       else if jumpCount < 2 # Double Jump / Air Jump
         # The player can get two jumps of this style by walking off a ledge then
         # doing their first jump
         ratio = (5 - jumpCount) / 6
         velocity.y = ratio * jumpImpulse
         jumpCount += 1
+        player.emit("jump")
     else
       lastJumping += dt
 

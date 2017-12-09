@@ -40,8 +40,15 @@ module.exports = (renderer) ->
     chunk = MapChunk loader.resources.sheet.texture, MapReader(loader.resources.map.texture.baseTexture.source)
     world.addChild chunk
 
-    player = Player(loader.resources.pika.texture, loader.resources.jump.data)
+    player = Player(loader.resources.pika.texture)
     player.velocity.set(100, -1000)
+
+    jumpSound = loader.resources.jump.data
+    player.on "jump", ->
+      if jumpSound.playing
+        jumpSound.stop()
+      jumpSound.play()
+
     world.addChild(player)
 
   stage.update = (dt, game) ->

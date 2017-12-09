@@ -46,9 +46,9 @@ module.exports = ({width, height}) ->
     # Need to switch scenes at frame transition to prevent rendering the new
     # secene before it updates
     if nextScene != activeScene
-      activeScene.emit("exited")
+      activeScene.emit("exit")
       activeScene = nextScene
-      activeScene.emit("entered")
+      activeScene.emit("enter")
 
     activeScene.update(dt, self)
     # Tell the `renderer` to `render` the `stage`

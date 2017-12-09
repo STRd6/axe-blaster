@@ -14,6 +14,7 @@ game = Game
 document.body.appendChild game.element
 
 introScene = Intro()
+
 platformerScene = Platformer(game.renderer)
 game.setScene introScene
 
