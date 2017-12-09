@@ -2,7 +2,12 @@ name: "Axe Blaster"
 version: "0.1.0"
 width: 1280
 height: 720
+entryPoint: "main" # "experiments/intro"
+publish:
+  s3:
+    basePath: "public/danielx.net"
+dependencies:
+  fxz: "STRd6/fxz:master"
 remoteDependencies: [
   "https://pixijs.download/v4.6.0/pixi.js"
 ]
-entryPoint: "main" # "experiments/intro"

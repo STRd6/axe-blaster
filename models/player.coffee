@@ -168,6 +168,10 @@ module.exports = (texture) ->
     bounds.y = player.y + 1
     standing = collides(bounds, collisionGeometry)
 
+    # Landed if we weren't standing and now we are
+    if lastStanding > 0.1 and standing
+      player.emit "land"
+
     if standing
       lastStanding = 0
       jumpCount = 0

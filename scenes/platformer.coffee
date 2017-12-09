@@ -2,10 +2,14 @@
 
 {Container} = PIXI
 
+audioContext = new AudioContext
+
 MapReader = require "../lib/map-reader"
 MapChunk = require "../models/map-chunk"
 Player = require "../models/player"
 Panzoom = require "../lib/panzoom"
+
+FXXPlayer = require "../lib/fxx-player"
 
 loader = new PIXI.loaders.Loader
 
@@ -32,7 +36,7 @@ module.exports = (renderer) ->
     {name: "sheet", url: "https://danielx.whimsy.space/axe-blaster/platformertiles.png"}
     {name: "map", url: "https://danielx.whimsy.space/axe-blaster/map.png"}
     {name: "theme", url: "https://danielx.whimsy.space/axe-blaster/Theme to Red Ice.ogg"}
-    {name: "jump", url: "https://danielx.whimsy.space/axe-blaster/jump.wav"}
+    {name: "fxx", url: "https://danielx.whimsy.space/axe-blaster/sound.fxx"}
   ])
   .on "progress", ({progress}) ->
     ;# progressElement.value = progress
@@ -43,11 +47,15 @@ module.exports = (renderer) ->
     player = Player(loader.resources.pika.texture)
     player.velocity.set(100, -1000)
 
-    jumpSound = loader.resources.jump.data
+    console.log loader.resources.fxx.data
+
+    fxxPlayer = FXXPlayer(loader.resources.fxx.data, audioContext)
+
     player.on "jump", ->
-      if jumpSound.playing
-        jumpSound.stop()
-      jumpSound.play()
+      fxxPlayer.play("jump")
+
+    player.on "land", ->
+      fxxPlayer.play("land")
 
     world.addChild(player)
 
