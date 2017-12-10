@@ -21,3 +21,13 @@ game.setScene platformerScene
 
 introScene.on "complete", ->
   game.setScene platformerScene
+
+SystemClient = require "system-client"
+{system, application} = SystemClient()
+
+system.ready()
+.then ->
+  application.observeSignal "fxx", (value) ->
+    console.log "obsv", value
+    audio.loadData value
+.catch ->

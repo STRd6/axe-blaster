@@ -27,4 +27,6 @@ Math.clamp = (number, lower, upper) ->
   max(min(number, upper), lower)
 
 # Global audio player
-global.audio = require "./lib/audio-player"
+FXXPlayer = require "../lib/fxx-player"
+
+global.audio = FXXPlayer(null, new AudioContext)

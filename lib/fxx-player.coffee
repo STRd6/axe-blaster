@@ -15,6 +15,8 @@ module.exports = (fxxBuffer, context) ->
 
   self =
     loadData: (fxxBuffer) ->
+      sounds = {}
+
       fxxData = new Uint8Array(fxxBuffer)
       l = fxxData.length
 
@@ -30,7 +32,7 @@ module.exports = (fxxBuffer, context) ->
         # Parse Name
         p = n * 116 + 8
         name = parseName fxxData.slice(p, p + 16)
-    
+
         # Synthesize Waveform
         buffer = fxxData.slice(p + 16, p + 116)
         sounds[name] = FXZ buffer.buffer, context
@@ -41,11 +43,11 @@ module.exports = (fxxBuffer, context) ->
 
       unless audioBuffer
         console.warn "No sound named #{name}"
-  
+
       node = new AudioBufferSourceNode context,
         buffer: audioBuffer
       node.connect context.destination
-  
+
       node.start()
 
   if fxxBuffer

@@ -8,6 +8,7 @@ publish:
     basePath: "public/danielx.net"
 dependencies:
   fxz: "STRd6/fxz:master"
+  "system-client": "STRd6/system-client:v0.1.6-pre.1"
 remoteDependencies: [
   "https://pixijs.download/v4.6.0/pixi.js"
 ]
