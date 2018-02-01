@@ -15,6 +15,9 @@ module.exports = (renderer) ->
   world = new Container() # Panable and zoomable game area
   overlay = new Container() # UI and fixed position things
 
+  player = null
+  chunk = null
+
   Panzoom(renderer, world)
 
   stage.addChild world
@@ -41,12 +44,14 @@ module.exports = (renderer) ->
     {x, y} = viewToWorld(x, y)
 
     console.log x, y
+    
+    tileX = Math.floor(x / 32)
+    tileY = Math.floor(y / 32)
 
-    worldCursor.x = Math.floor(x / 32) * 32
-    worldCursor.y = Math.floor(y / 32) * 32
+    worldCursor.x = tileX * 32
+    worldCursor.y = tileY * 32
 
-  player = null
-  chunk = null
+    chunk?.addTile tileX, tileY
 
   loader.add([
     {name: "pika", url: "https://2.pixiecdn.com/sprites/137922/original.png?1"}
