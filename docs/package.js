@@ -309,6 +309,11 @@
       "path": "notes/pixi-faq.md",
       "content": "PIXI FAQ\n========\n\nHow do I change a sprite's texture?\n\n    sprite.texture = texture\n",
       "mode": "100644"
+    },
+    "TODO.md": {
+      "path": "TODO.md",
+      "content": "TODO\n====\n\nMaps\n----\n\n[x] Edit tilemap data and update auto-tiling\n[ ] Save and load levels\n[ ] Multi-chunk levels\n[ ] Mini-map\n\nGameplay\n--------\n\nCreatures and Monsters\n----------------------\n\nIt's boring jumping around with no obstacles or objectives. Having some weird\nmonster would spice things up.\n\n[ ] Bat\n[ ] Ninji (SMB2)\n\nItems\n-----\n\nNot entirely sure what direction to take things, but exploring some combat stuff\ncould be neat.\n\n[ ] Sword\n[ ] Shield\n[ ] Bow and Arrow\n[ ] Spear\n[ ] Flintlock\n[ ] Grenade\n[ ] Six shooter\n\nMay want to focus on stealth and tactics.\n\nCould also go a more CaveStory route and remove focus on melee and instead have\na more run and gun feel.\n",
+      "mode": "100644"
     }
   },
   "distribution": {
