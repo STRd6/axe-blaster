@@ -50,21 +50,36 @@ module.exports = (texture, mapData) ->
 
   container = new Container
 
-  (({data, width, height}) ->
-    data.forEach (value, i) ->
-      x = i % width
-      y = (i / width)|0
+  {data, width, height} = mapData
+  
+  data.forEach (value, i) ->
+    x = i % width
+    y = (i / width)|0
 
-      if value
-        tIndex = getAutoTileIndex(i, mapData)
-        tex = tileTextures[tIndex] or defaultTexture
-        block = new Sprite(tex)
-        block.x = x * 32
-        block.y = y * 32
-        container.addChild(block)
+    if value
+      tIndex = getAutoTileIndex(i, mapData)
+      tex = tileTextures[tIndex] or defaultTexture
+      block = new Sprite(tex)
+      block.x = x * 32
+      block.y = y * 32
+      container.addChild(block)
 
-        # debug tile index
-        # block.addChild new Text(tIndex, fill: "#FFF")
-  )(mapData)
+      # debug tile index
+      # block.addChild new Text(tIndex, fill: "#FFF")
+
+  addTile = (x, y) ->
+    return unless 0 <= x < width
+    return unless 0 <= y < height
+
+    i = x + y * width
+
+    tIndex = getAutoTileIndex(i, mapData)
+    tex = tileTextures[tIndex] or defaultTexture
+    block = new Sprite(tex)
+    block.x = x * 32
+    block.y = y * 32
+    container.addChild(block)
+
+  container.addTile = addTile
 
   return container

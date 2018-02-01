@@ -1,6 +1,6 @@
 {width, height} = require "../pixie"
 
-{Container} = PIXI
+{Container, Graphics, Point} = PIXI
 
 MapReader = require "../lib/map-reader"
 MapChunk = require "../models/map-chunk"
@@ -19,6 +19,31 @@ module.exports = (renderer) ->
 
   stage.addChild world
   stage.addChild overlay
+
+  worldCursor = new Graphics()
+  worldCursor.lineStyle 5, 0x00FF00
+  worldCursor.drawRect 0, 0, 32, 32
+  worldCursor.alpha = 0.5
+
+  world.addChild worldCursor
+
+  viewToWorld = (x, y) ->
+    new Point x / world.scale.x + world.pivot.x, y / world.scale.y + world.pivot.y
+
+  renderer.view.addEventListener 'mousedown', (e) ->
+    {top, left} = e.currentTarget.getBoundingClientRect()
+
+    x = e.clientX - left
+    y = e.clientY - top
+
+    console.log x, y
+
+    {x, y} = viewToWorld(x, y)
+
+    console.log x, y
+
+    worldCursor.x = Math.floor(x / 32) * 32
+    worldCursor.y = Math.floor(y / 32) * 32
 
   player = null
   chunk = null
@@ -49,6 +74,8 @@ module.exports = (renderer) ->
       audio.play("land")
 
     world.addChild(player)
+    # Make sure worldCursor is last
+    world.addChild worldCursor
 
   stage.update = (dt, game) ->
     # Handle player collisions

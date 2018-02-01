@@ -5,7 +5,7 @@ Append stats and things to the dom
 Calls the active scene's update method and renders it in the PIXI renderer.
 ###
 
-{loader, Container, Point, Rectangle, Sprite, Text, Texture} = PIXI
+{Container} = PIXI
 
 # Scenes are PIXI.Containers extended with an update method
 nullScene = new Container
