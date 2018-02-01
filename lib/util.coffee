@@ -27,5 +27,5 @@ module.exports =
 
   # NOTE: x, y values are center of rects
   hitTestRectangle2: (a, b) ->
-    return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
-           (abs(a.y - b.y) * 2 < (a.height + b.height))
+    (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+    (abs(a.y - b.y) * 2 < (a.height + b.height))

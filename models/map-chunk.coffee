@@ -1,5 +1,9 @@
 {Container, Sprite, Text, Texture, Rectangle} = PIXI
 
+{hitTestRectangle} = require "../lib/util"
+
+TILE_WIDTH = TILE_HEIGHT = 32
+
 autoTileIndexes = [
   [1, 1]
   [4, 2]
@@ -26,10 +30,7 @@ neighbors = [
   [-1, 0]
 ]
 
-getAutoTileIndex = (index, {width, height, data}) ->
-  x = index % width
-  y = (index / width)|0
-
+getAutoTileIndex = (x, y, {width, height, data}) ->
   neighbors.reduce (acc, [dx, dy], n) ->
     m = Math.pow(2, n)
 
@@ -42,26 +43,32 @@ getAutoTileIndex = (index, {width, height, data}) ->
       acc + m
   , 0
 
+# We're assuming that i has been checked for the correct width, height bounds
+getAutoTileTexture = (x, y, mapData, tileTextures) ->
+  index = getAutoTileIndex(x, y, mapData)
+
+  tileTextures[index] or tileTextures[0]
+
 module.exports = (texture, mapData) ->
   tileTextures = autoTileIndexes.map ([x, y, rotate]) ->
-    new Texture(texture, new Rectangle(32 * x, 32 * y, 32, 32), null, null, rotate)
+    rect = new Rectangle(TILE_WIDTH * x, TILE_HEIGHT * y, TILE_WIDTH, TILE_HEIGHT)
 
-  defaultTexture = tileTextures[0]
+    new Texture(texture, rect, null, null, rotate)
 
   container = new Container
 
   {data, width, height} = mapData
-  
+
   data.forEach (value, i) ->
     x = i % width
     y = (i / width)|0
 
     if value
-      tIndex = getAutoTileIndex(i, mapData)
-      tex = tileTextures[tIndex] or defaultTexture
+      tex = getAutoTileTexture(x, y, mapData, tileTextures)
+
       block = new Sprite(tex)
-      block.x = x * 32
-      block.y = y * 32
+      block.x = x * TILE_WIDTH
+      block.y = y * TILE_HEIGHT
       container.addChild(block)
 
       # debug tile index
@@ -73,11 +80,24 @@ module.exports = (texture, mapData) ->
 
     i = x + y * width
 
-    tIndex = getAutoTileIndex(i, mapData)
-    tex = tileTextures[tIndex] or defaultTexture
+    # Don't add if already present
+    return if mapData.data[i]
+
+    # Update map data with added tile
+    mapData.data[i] = true
+
+    tex = getAutoTileTexture(x, y, mapData, tileTextures)
+
     block = new Sprite(tex)
-    block.x = x * 32
-    block.y = y * 32
+    block.x = x * TILE_WIDTH
+    block.y = y * TILE_HEIGHT
+
+    rect = new Rectangle block.x - 1, block.y - 1, block.width + 2, block.height + 2
+    # Update nearby tiles with correct auto-tile texture
+    container.children.forEach (child) ->
+      if hitTestRectangle(rect, child)
+        child.texture = getAutoTileTexture(child.x / TILE_WIDTH, child.y / TILE_HEIGHT, mapData, tileTextures)
+
     container.addChild(block)
 
   container.addTile = addTile
